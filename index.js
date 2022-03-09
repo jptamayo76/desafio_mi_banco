@@ -46,25 +46,25 @@ function ingresarCompra(descripcion, valor, cuenta_destino, cuenta_origen) {
             };
 
             registerResponse = await client.query(registerQuery);
-            console.log('Ultima transaccion agregada :\n' + registerResponse.rows[0]);
-            console.log('Ultima transaccion agregada :\n' + JSON.stringify(registerResponse.rows[0]));
+            console.log('\nUltima transaccion agregada :\n');
+            console.log('ID transaccion :', registerResponse.rows[0].id);
+            console.log('Descripcion compra :', registerResponse.rows[0].descripcion);
+            console.log('Fecha :', registerResponse.rows[0].fecha);
+            console.log('Monto :', registerResponse.rows[0].monto);
+            console.log('Cuenta :', registerResponse.rows[0].cuenta);
 
-            // try {
-            //     const res = await client.query(registerQuery);
-            //     console.log('Ultima transaccion agregada :\n' + res.rows[0]);
-            //     console.log('Ultima transaccion agregada :\n' + JSON.stringify(res.rows[0]));
-            // } catch (err) {
-            //     console.log("\nError al agregar una nueva compra: ", err.detail);
-            //     console.log("Codigo de Error:", err.code);
-            // }
-
+            //console.log('Ultima transaccion agregada :\n' + JSON.stringify(registerResponse.rows[0]));
             await client.query("COMMIT");
         } catch (e) {
             await client.query("ROLLBACK");
-            console.log("Error código: " + e.code);
-            console.log("Detalle del error: " + e.detail);
-            console.log("Tabla originaria del error: " + e.table);
-            console.log("Restricción violada en el campo: " + e.constraint);
+            if (e.code) {
+                console.log("Error código: " + e.code);
+                console.log("Detalle del error: " + e.detail);
+                console.log("Tabla originaria del error: " + e.table);
+                console.log("Restricción violada en el campo: " + e.constraint);
+            } else {
+                console.log("Error : " + e);
+            }
         } finally {
             release();
             pool.end();
